@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Batch Script Progress</title>
+    <style>
+        #terminal {
+            font-family: monospace;
+            background-color: black;
+            color: green;
+            padding: 10px;
+            height: 400px;
+            width: 100%;
+            overflow-y: scroll;
+            white-space: pre-wrap;  /* Preserve the formatting of the text */
+        }
+        .btn {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Run Script to train model</h1>
+
+<button class="btn" id="runButton" onclick="startScript()">Start Training</button>
+
+<div id="terminal"></div>
+
+<script>
+    // Function to start the batch file and disable the button
+    function startScript() {
+        fetch('/run_bat_stream/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "Command started!") {
+                    console.log("Batch script started...");
+                    document.getElementById('runButton').disabled = true;  // Disable the button after starting the script
+                }
+            });
+
+        // Start polling for progress every second
+        setInterval(getProgress, 1000);
+    }
+
+    // Function to poll for the latest progress from the log file
+    function getProgress() {
+        fetch('/get_progress/')
+            .then(response => response.json())
+            .then(data => {
+                const terminal = document.getElementById('terminal');
+                terminal.textContent = data.progress;  // Update terminal content with latest progress
+                terminal.scrollTop = terminal.scrollHeight;  // Auto-scroll to the bottom
+            })
+            .catch(error => {
+                console.error("Error fetching progress:", error);
+            });
+    }
+</script>
+
+</body>
+</html>

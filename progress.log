@@ -1,0 +1,2 @@
+
+I:\pythondjango practice\dreamshaper>start cmd.exe /K "cd /d I:\lora\OneTrainer && call venv\Scripts\activate && python scripts\train.py --config-path I:\lora\OneTrainer\training_presets\dreamshaper.json && pause" 
